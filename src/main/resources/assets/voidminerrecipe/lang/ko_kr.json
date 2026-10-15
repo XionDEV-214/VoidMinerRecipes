@@ -1,0 +1,22 @@
+{
+  "voidminerrecipe.tier.mk1": "보이드 마이너 MK I",
+  "voidminerrecipe.tier.mk2": "보이드 마이너 MK II",
+  "voidminerrecipe.tier.mk3": "보이드 마이너 MK III",
+  "voidminerrecipe.tier.mk4": "보이드 마이너 MK IV",
+  "voidminerrecipe.tier.space_elevator": "우주 엘리베이터 보이드 마이너",
+  "voidminerrecipe.gui.vein_selector.title": "광맥 선택",
+  "voidminerrecipe.gui.vein_selector.tooltip": "채굴할 광맥을 선택합니다. 구성이 같거나 부분집합인 광맥은 그룹으로 묶이며 > 로 펼칩니다",
+  "voidminerrecipe.gui.vein_selector.selected": "선택: %s개",
+  "voidminerrecipe.gui.vein_selector.clear": "전체 해제",
+  "voidminerrecipe.multiblock.no_selection": "선택된 광맥 없음 (광맥 선택 탭을 여세요)",
+  "voidminerrecipe.multiblock.selected_veins": "선택된 광맥: %s개",
+  "voidminerrecipe.multiblock.fuel_per_cycle": "사이클당 연료: %s mB",
+  "voidminerrecipe.multiblock.power_per_tick": "소비 전력: %s EU/t",
+  "voidminerrecipe.jei.category": "보이드 마이너",
+  "voidminerrecipe.jei.fuel": "연료",
+  "voidminerrecipe.jei.power": "%s EU/t (광맥당)",
+  "voidminerrecipe.jei.duration": "사이클: %s초",
+  "voidminerrecipe.jei.fuel_amount": "연료: %s mB (광맥당)",
+  "voidminerrecipe.jei.multi_select": "N개 선택 시 연료와 EU/t가 N배",
+  "voidminerrecipe.gui.vein_selector.back": "뒤로"
+}

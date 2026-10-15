@@ -1,0 +1,22 @@
+{
+  "voidminerrecipe.tier.mk1": "Void Miner MK I",
+  "voidminerrecipe.tier.mk2": "Void Miner MK II",
+  "voidminerrecipe.tier.mk3": "Void Miner MK III",
+  "voidminerrecipe.tier.mk4": "Void Miner MK IV",
+  "voidminerrecipe.tier.space_elevator": "Space Elevator Void Miner",
+  "voidminerrecipe.gui.vein_selector.title": "Vein Selector",
+  "voidminerrecipe.gui.vein_selector.tooltip": "Select ore veins. Veins with the same (or a subset of the) ores are grouped; press > to open a group",
+  "voidminerrecipe.gui.vein_selector.selected": "Selected: %s",
+  "voidminerrecipe.gui.vein_selector.clear": "Clear all",
+  "voidminerrecipe.multiblock.no_selection": "No vein selected (open the Vein Selector tab)",
+  "voidminerrecipe.multiblock.selected_veins": "Selected veins: %s",
+  "voidminerrecipe.multiblock.fuel_per_cycle": "Fuel per cycle: %s mB",
+  "voidminerrecipe.multiblock.power_per_tick": "Power draw: %s EU/t",
+  "voidminerrecipe.jei.category": "Void Miner",
+  "voidminerrecipe.jei.fuel": "Fuel",
+  "voidminerrecipe.jei.power": "%s EU/t (per vein)",
+  "voidminerrecipe.jei.duration": "Cycle: %s s",
+  "voidminerrecipe.jei.fuel_amount": "Fuel: %s mB (per vein)",
+  "voidminerrecipe.jei.multi_select": "Selecting N veins multiplies fuel and EU/t by N",
+  "voidminerrecipe.gui.vein_selector.back": "Back"
+}
