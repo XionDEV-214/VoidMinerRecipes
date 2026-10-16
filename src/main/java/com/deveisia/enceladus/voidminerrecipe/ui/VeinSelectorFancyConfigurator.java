@@ -29,7 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VeinSelectorFancyConfigurator implements IFancyUIProvider {
-    private static final int ROW_H = 14;
+    /** 선택 버튼 높이 (기존 14의 1.5배). */
+    private static final int ROW_H = 21;
     private static final int LIST_W = 150;
     private static final int EXPAND_W = 20;
 

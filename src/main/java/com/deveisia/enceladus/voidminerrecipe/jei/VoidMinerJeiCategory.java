@@ -36,7 +36,7 @@ public class VoidMinerJeiCategory implements IRecipeCategory<VoidMinerJeiRecipe>
     private static final int WIDTH = 176;
     private static final int HEIGHT = 124;
 
-    private static final long CYCLE_MS = 2500L;
+    private static final long CYCLE_MS = 1000L;
     private static final int COLS = 8;
     private static final int TEXT = 0xFF404040;
 
