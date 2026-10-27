@@ -18,5 +18,9 @@
   "voidminerrecipe.jei.duration": "사이클: %s초",
   "voidminerrecipe.jei.fuel_amount": "연료: %s mB (광맥당)",
   "voidminerrecipe.jei.multi_select": "N개 선택 시 연료와 EU/t가 N배",
-  "voidminerrecipe.gui.vein_selector.back": "뒤로"
+  "voidminerrecipe.gui.vein_selector.back": "뒤로",
+  "voidminerrecipe.jei.per_cycle": "사이클당: %s개",
+  "voidminerrecipe.jei.per_cycle_base": "사이클당 (기본): %s개",
+  "voidminerrecipe.jei.vein_share": "광맥 내 비율 %s%%",
+  "voidminerrecipe.jei.more_ores": "외 광석 %s종"
 }

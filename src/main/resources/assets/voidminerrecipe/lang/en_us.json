@@ -18,5 +18,9 @@
   "voidminerrecipe.jei.duration": "Cycle: %s s",
   "voidminerrecipe.jei.fuel_amount": "Fuel: %s mB (per vein)",
   "voidminerrecipe.jei.multi_select": "Selecting N veins multiplies fuel and EU/t by N",
-  "voidminerrecipe.gui.vein_selector.back": "Back"
+  "voidminerrecipe.gui.vein_selector.back": "Back",
+  "voidminerrecipe.jei.per_cycle": "Per cycle: %s",
+  "voidminerrecipe.jei.per_cycle_base": "Per cycle (base): %s",
+  "voidminerrecipe.jei.vein_share": "%s%% of vein",
+  "voidminerrecipe.jei.more_ores": "+%s more ores"
 }

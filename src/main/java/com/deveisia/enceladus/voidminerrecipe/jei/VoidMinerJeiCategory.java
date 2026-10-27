@@ -3,64 +3,83 @@ package com.deveisia.enceladus.voidminerrecipe.jei;
 import com.deveisia.enceladus.voidminerrecipe.VoidMinerRecipe;
 import com.deveisia.enceladus.voidminerrecipe.VoidMinerTier;
 
-import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
-import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
-import com.gregtechceu.gtceu.common.data.GTMaterials;
+import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
-import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
+/** One JEI tab per Void Miner tier; every page of a tab is a single ore vein. */
 public class VoidMinerJeiCategory implements IRecipeCategory<VoidMinerJeiRecipe> {
-    public static final RecipeType<VoidMinerJeiRecipe> TYPE = RecipeType.create(VoidMinerRecipe.MOD_ID,
-            "void_miner", VoidMinerJeiRecipe.class);
+    private static final Map<VoidMinerTier, RecipeType<VoidMinerJeiRecipe>> TYPES = new EnumMap<>(VoidMinerTier.class);
 
-    private static final int WIDTH = 176;
-    private static final int HEIGHT = 124;
+    static {
+        for (VoidMinerTier tier : VoidMinerTier.values()) {
+            TYPES.put(tier, RecipeType.create(VoidMinerRecipe.MOD_ID, "void_miner_" + tier.key,
+                    VoidMinerJeiRecipe.class));
+        }
+    }
 
-    private static final long CYCLE_MS = 1000L;
-    private static final int COLS = 8;
-    private static final int TEXT = 0xFF404040;
+    public static RecipeType<VoidMinerJeiRecipe> type(VoidMinerTier tier) {
+        return TYPES.get(tier);
+    }
 
-    private final IDrawable background;
+    private static final int WIDTH = VeinPageLayout.WIDTH;
+    private static final int FOOTER = VeinPageLayout.FOOTER_Y;
+    private static final int HEIGHT = FOOTER + 34;
+    private static final int TEXT = VeinPageLayout.TEXT;
+    private static final int MUTED = VeinPageLayout.MUTED;
+
+    private final VoidMinerTier tier;
+    private final IJeiHelpers helpers;
     private final IDrawable icon;
 
-    public VoidMinerJeiCategory(IGuiHelper guiHelper) {
-        this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
-        this.icon = guiHelper.createDrawableItemStack(ChemicalHelper.get(TagPrefix.rawOre, GTMaterials.Iron));
+    public VoidMinerJeiCategory(IJeiHelpers helpers, VoidMinerTier tier, ItemStack iconStack) {
+        this.tier = tier;
+        this.helpers = helpers;
+        this.icon = helpers.getGuiHelper().createDrawableItemStack(iconStack);
     }
 
     @Override
     public @NotNull RecipeType<VoidMinerJeiRecipe> getRecipeType() {
-        return TYPE;
+        return type(tier);
     }
 
     @Override
     public @NotNull Component getTitle() {
-        return Component.translatable("voidminerrecipe.jei.category");
+        return Component.translatable(tier.langKey());
     }
 
     @Override
-    public @NotNull IDrawable getBackground() {
-        return background;
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    @Override
+    public int getHeight() {
+        return HEIGHT;
     }
 
     @Override
@@ -69,62 +88,46 @@ public class VoidMinerJeiCategory implements IRecipeCategory<VoidMinerJeiRecipe>
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, VoidMinerJeiRecipe recipe, IFocusGroup focuses) {
-        VoidMinerTier tier = recipe.tier();
-        Fluid fuel = tier.fuelFluid();
-        if (fuel != null) {
-            builder.addSlot(RecipeIngredientRole.INPUT, 6, 20).addFluidStack(fuel, tier.fuelAmount);
-        }
-
-        List<ItemStack> all = new ArrayList<>();
-        for (var vein : recipe.veins()) all.addAll(vein.ores());
-        builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT).addItemStacks(all);
+    public @Nullable ResourceLocation getRegistryName(VoidMinerJeiRecipe recipe) {
+        return new ResourceLocation(VoidMinerRecipe.MOD_ID, tier.key + "/" + recipe.vein().id().getNamespace() +
+                "/" + recipe.vein().id().getPath());
     }
 
-    private static String compact(int n) {
-        if (n >= 1_000_000) return String.format("%.1fM", n / 1_000_000.0);
-        if (n >= 1_000) return String.format("%.1fK", n / 1_000.0);
-        return Integer.toString(n);
+    @Override
+    public void setRecipe(IRecipeLayoutBuilder builder, VoidMinerJeiRecipe recipe, IFocusGroup focuses) {
+        VeinPageLayout.setRecipe(builder, helpers, recipe.vein(), tier.outputCount, true, List.of(
+                Component.translatable("voidminerrecipe.jei.multi_select").withStyle(ChatFormatting.DARK_GRAY)));
+
+        Fluid fuel = tier.fuelFluid();
+        if (fuel != null) {
+            builder.addSlot(RecipeIngredientRole.INPUT, 5, FOOTER + 9)
+                    .setStandardSlotBackground()
+                    .addFluidStack(fuel, tier.fuelAmount)
+                    .addRichTooltipCallback((view, tooltip) -> tooltip.add(
+                            Component.translatable("voidminerrecipe.jei.multi_select")
+                                    .withStyle(ChatFormatting.GRAY)));
+        }
     }
 
     @Override
     public void draw(VoidMinerJeiRecipe recipe, IRecipeSlotsView slots, GuiGraphics gg, double mouseX,
                      double mouseY) {
         Font font = Minecraft.getInstance().font;
-        VoidMinerTier tier = recipe.tier();
+        VeinPageLayout.drawHeader(gg, font, recipe.vein());
+        VeinPageLayout.drawRows(gg, font, recipe.vein());
 
-        gg.drawString(font, Component.translatable(tier.langKey()), 6, 4, TEXT, false);
-        gg.drawString(font, Component.translatable("voidminerrecipe.jei.fuel"), 6, 42, TEXT, false);
-
-        List<VoidMinerJeiRecipe.VeinView> veins = recipe.veins();
-        if (!veins.isEmpty()) {
-            int idx = (int) ((System.currentTimeMillis() / CYCLE_MS) % veins.size());
-            var vein = veins.get(idx);
-
-            gg.drawString(font, vein.name(), 30, 16, TEXT, false);
-            gg.drawString(font, (idx + 1) + " / " + veins.size(), WIDTH - 6 - font.width(
-                    (idx + 1) + " / " + veins.size()), 4, TEXT, false);
-
-            List<ItemStack> ores = vein.ores();
-            for (int i = 0; i < ores.size() && i < COLS * 3; i++) {
-                int x = 30 + (i % COLS) * 18;
-                int y = 28 + (i / COLS) * 18;
-                gg.renderItem(ores.get(i), x, y);
-                if (tier.outputCount > 1) {
-                    gg.renderItemDecorations(font, ores.get(i), x, y,
-                            compact(tier.outputCount));
-                }
-            }
+        int x = 27;
+        int w = WIDTH - x - 4;
+        String power = GTValues.VNF[tier.voltageTier] + ChatFormatting.RESET + " " +
+                Component.translatable("voidminerrecipe.jei.power", FormattingUtil.formatNumbers(tier.voltage()))
+                        .getString();
+        gg.drawString(font, VeinPageLayout.fit(font, power, w), x, FOOTER + 2, TEXT, false);
+        gg.drawString(font, VeinPageLayout.fit(font, Component.translatable("voidminerrecipe.jei.duration",
+                FormattingUtil.formatNumbers(tier.duration / 20.0)).getString(), w), x, FOOTER + 12, TEXT, false);
+        gg.drawString(font, VeinPageLayout.fit(font, Component.translatable("voidminerrecipe.jei.fuel_amount",
+                FormattingUtil.formatNumbers(tier.fuelAmount)).getString(), w), x, FOOTER + 22, MUTED, false);
+        if (tier.fuelFluid() == null) {
+            gg.drawString(font, "?", 10, FOOTER + 13, 0xFFAA0000, false);
         }
-
-        int y = 86;
-        gg.drawString(font, Component.translatable("voidminerrecipe.jei.power", tier.voltage()), 6, y, TEXT,
-                false);
-        gg.drawString(font, Component.translatable("voidminerrecipe.jei.duration",
-                FormattingUtil.formatNumbers(tier.duration / 20.0)), 6, y + 10, TEXT, false);
-        gg.drawString(font, Component.translatable("voidminerrecipe.jei.fuel_amount",
-                FormattingUtil.formatNumbers(tier.fuelAmount)), 6, y + 20, TEXT, false);
-        gg.drawString(font, Component.translatable("voidminerrecipe.jei.multi_select"), 6, y + 30, 0xFF808080,
-                false);
     }
 }
